@@ -752,7 +752,8 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`work_schedule` (
   INDEX `fk_work_schedule_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
   CONSTRAINT `fk_work_schedule_restaurant10`
     FOREIGN KEY (`restaurant_id`)
-    REFERENCES `catchtable`.`restaurant` (`id`)
+    REFERENCES `catchtable`.
+     (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
