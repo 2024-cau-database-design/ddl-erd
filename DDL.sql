@@ -500,8 +500,15 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`payment` (
     FOREIGN KEY (`order_id`)
     REFERENCES `catchtable`.`order` (`id`)
     ON DELETE NO ACTION
-   
-  ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `catchtable`.`payment_status` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `type` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -513,7 +520,7 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`payment_history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `method` VARCHAR(30) NOT NULL,
   `amount` INT UNSIGNED NOT NULL,
-  `status` INT UNSIGNED NOT NULL,
+  `status_id` INT UNSIGNED NULL,
   `transaction_date` DATE NOT NULL,
   `payment_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
@@ -522,10 +529,17 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`payment_history` (
     FOREIGN KEY (`payment_id`)
     REFERENCES `catchtable`.`payment` (`id`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_payment_history_payment_status1`
+    FOREIGN KEY (`status_id`)
+    REFERENCES `catchtable`.`payment_status` (`id`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
+
+
 
 -- -----------------------------------------------------
 -- Table `catchtable`.`pickup_status`
@@ -752,8 +766,7 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`work_schedule` (
   INDEX `fk_work_schedule_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
   CONSTRAINT `fk_work_schedule_restaurant10`
     FOREIGN KEY (`restaurant_id`)
-    REFERENCES `catchtable`.
-     (`id`)
+    REFERENCES `catchtable`.`restaurant` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
