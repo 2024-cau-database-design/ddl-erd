@@ -345,9 +345,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
--- -----------------------------------------------------
--- Table `Restaurant_Reservation`.`order_item`
--- -----------------------------------------------------
+-- `order_item` 테이블 정의
 CREATE TABLE IF NOT EXISTS `catchtable`.`order_item` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `quantity` INT UNSIGNED NOT NULL,
@@ -356,42 +354,40 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`order_item` (
   `menu_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `order_item_ibfk_1` (`order_id` ASC) VISIBLE,
-  INDEX `menu_id` (`menu_id` ASC) VISIBLE, -- Added index for menu_id
+  INDEX `menu_id_idx` (`menu_id` ASC) VISIBLE, -- Updated index for menu_id
   CONSTRAINT `order_item_ibfk_1`
     FOREIGN KEY (`order_id`)
     REFERENCES `catchtable`.`order` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `order_item_ibfk_2`
+    FOREIGN KEY (`menu_id`)
+    REFERENCES `catchtable`.`restaurant_menu` (`id`) -- Correct FK relationship
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
--- -----------------------------------------------------
--- Table `restaurant`.`restaurant_menu`
--- -----------------------------------------------------
+-- `restaurant_menu` 테이블 정의
 CREATE TABLE IF NOT EXISTS `catchtable`.`restaurant_menu` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `restaurant_id` INT UNSIGNED NOT NULL,
   `name` VARCHAR(20) NOT NULL,
   `description` TEXT NULL DEFAULT NULL,
   `price` INT UNSIGNED NOT NULL,
-  `created_at` DATETIME NOT NULL DEFAULT
-  CURRENT_TIMESTAMP,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_hidden` TINYINT(1) NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  INDEX `restaurant_id` (`restaurant_id` ASC) VISIBLE,
+  INDEX `restaurant_id_idx` (`restaurant_id` ASC) VISIBLE,
   CONSTRAINT `restaurant_menu_ibfk_1`
     FOREIGN KEY (`restaurant_id`)
     REFERENCES `catchtable`.`restaurant` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
- 
-  CONSTRAINT `fk_restaurant_menu_order_item1`
-    FOREIGN KEY (`id`)
-    REFERENCES `catchtable`.`order_item` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION
+)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
