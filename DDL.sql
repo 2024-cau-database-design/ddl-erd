@@ -600,24 +600,11 @@ DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
--- Table `catchtable`.`waiting_info`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `catchtable`.`waiting_info` (
-  `waiting_id` INT UNSIGNED NOT NULL,
-  `party_size` INT NOT NULL,
-  `restaurant_id` INT UNSIGNED NOT NULL,
-  `customer_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`waiting_id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
--- -----------------------------------------------------
 -- Table `catchtable`.`waiting`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `catchtable`.`waiting` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` INT NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `customer_id` INT UNSIGNED NOT NULL,
   `guest_count` INT NOT NULL,
   `restaurant_id` INT UNSIGNED NOT NULL,
@@ -629,9 +616,6 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`waiting` (
     REFERENCES `catchtable`.`customer` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_waiting_waiting_info1`
-    FOREIGN KEY (`id`)
-    REFERENCES `catchtable`.`waiting_info` (`waiting_id`),
   CONSTRAINT 
 `fk_waiting_restaurant1`
     FOREIGN KEY (`restaurant_id`)
@@ -663,11 +647,6 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`waiting_history` (
   `waiting_status_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_waiting_history_waiting_status1_idx` (`waiting_status_id` ASC) VISIBLE,
-  CONSTRAINT `fk_waiting_history_waiting_info1`
-    FOREIGN KEY (`waiting_id`)
-    REFERENCES `catchtable`.`waiting_info` (`waiting_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_waiting_history_waiting1`
     FOREIGN KEY (`waiting_id`)
     REFERENCES `catchtable`.`waiting` (`id`)
