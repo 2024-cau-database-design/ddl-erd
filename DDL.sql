@@ -707,6 +707,20 @@ DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+DELIMITER //
+
+CREATE TRIGGER `update_deleted_at_trigger`
+BEFORE UPDATE ON `catchtable`.`reataurant_bookmark`
+FOR EACH ROW
+BEGIN
+  IF NEW.is_deleted = 1 AND OLD.is_deleted = 0 THEN
+    SET NEW.deleted_at = NOW();
+  END IF;
+END//
+
+DELIMITER ;
+
+
 -- -----------------------------------------------------
 -- Table `catchtable`.`restaurant_food_category`
 -- -----------------------------------------------------
