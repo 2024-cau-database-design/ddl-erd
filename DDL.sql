@@ -218,8 +218,12 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`reservation` (
   INDEX `reservation_ibfk_2` (`reservation_time_id` ASC) VISIBLE,
   INDEX `fk_reservation_restaurant_table1_idx` (`restaurant_table_id` ASC) VISIBLE,
   INDEX `fk_reservation_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
-  CONSTRAINT 
-`reservation_ibfk_2`
+  CONSTRAINT `fk_reservation_booking`
+    FOREIGN KEY (`id`)
+    REFERENCES `catchtable`.`booking` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `reservation_ibfk_2`
     FOREIGN KEY (`reservation_time_id`)
     REFERENCES `catchtable`.`reservation_time` (`id`)
     ON DELETE NO ACTION
@@ -271,11 +275,16 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup` (
   PRIMARY KEY (`id`),
   INDEX `pickup_ibfk_2` (`pickup_time_id` ASC) VISIBLE,
   INDEX `fk_pickup_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
+  CONSTRAINT `fk_pickup_booking`
+    FOREIGN KEY (`id`)
+    REFERENCES `catchtable`.`booking` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `pickup_ibfk_2`
     FOREIGN KEY (`pickup_time_id`)
     REFERENCES `catchtable`.`pickup_time` (`id`)
     ON DELETE 
-NO ACTION
+    NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_pickup_restaurant1`
     FOREIGN KEY (`restaurant_id`)
@@ -292,16 +301,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `catchtable`.`booking` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` ENUM('pickup', 'reservation') NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `booking_ibfk_1`
-    FOREIGN KEY (`id`)
-    REFERENCES `catchtable`.`reservation` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `booking_ibfk_8`
-    FOREIGN KEY (`id`)
-    REFERENCES `catchtable`.`pickup` (`id`))
-ENGINE = InnoDB
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
