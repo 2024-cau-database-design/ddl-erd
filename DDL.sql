@@ -218,8 +218,12 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`reservation` (
   INDEX `reservation_ibfk_2` (`reservation_time_id` ASC) VISIBLE,
   INDEX `fk_reservation_restaurant_table1_idx` (`restaurant_table_id` ASC) VISIBLE,
   INDEX `fk_reservation_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
-  CONSTRAINT 
-`reservation_ibfk_2`
+  CONSTRAINT `fk_reservation_booking`
+    FOREIGN KEY (`id`)
+    REFERENCES `catchtable`.`booking` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `reservation_ibfk_2`
     FOREIGN KEY (`reservation_time_id`)
     REFERENCES `catchtable`.`reservation_time` (`id`)
     ON DELETE NO ACTION
@@ -262,7 +266,7 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `picked_at` DATETIME NULL,
   `pickup_time_id` INT UNSIGNED NOT NULL,
-  `pickup_date` DATE NOT NULL,
+  `pickup_at` DATE NOT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
@@ -271,6 +275,11 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup` (
   PRIMARY KEY (`id`),
   INDEX `pickup_ibfk_2` (`pickup_time_id` ASC) VISIBLE,
   INDEX `fk_pickup_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
+  CONSTRAINT `fk_pickup_booking`
+    FOREIGN KEY (`id`)
+    REFERENCES `catchtable`.`booking` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `pickup_ibfk_2`
     FOREIGN KEY (`pickup_time_id`)
     REFERENCES `catchtable`.`pickup_time` (`id`)
@@ -292,16 +301,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `catchtable`.`booking` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` ENUM('pickup', 'reservation') NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `booking_ibfk_1`
-    FOREIGN KEY (`id`)
-    REFERENCES `catchtable`.`reservation` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `booking_ibfk_8`
-    FOREIGN KEY (`id`)
-    REFERENCES `catchtable`.`pickup` (`id`))
-ENGINE = InnoDB
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -344,9 +345,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
--- -----------------------------------------------------
--- Table `Restaurant_Reservation`.`order_item`
--- -----------------------------------------------------
+-- 'order_item' 테이블 정의
 CREATE TABLE IF NOT EXISTS `catchtable`.`order_item` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `quantity` INT UNSIGNED NOT NULL,
@@ -355,42 +354,40 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`order_item` (
   `menu_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `order_item_ibfk_1` (`order_id` ASC) VISIBLE,
-  INDEX `menu_id` (`menu_id` ASC) VISIBLE, -- Added index for menu_id
+  INDEX `menu_id_idx` (`menu_id` ASC) VISIBLE, -- Updated index for menu_id
   CONSTRAINT `order_item_ibfk_1`
     FOREIGN KEY (`order_id`)
     REFERENCES `catchtable`.`order` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+	ON UPDATE NO ACTION,
+  CONSTRAINT `order_item_ibfk_2`
+    FOREIGN KEY (`menu_id`)
+    REFERENCES `catchtable`.`restaurant_menu` (`id`) -- Correct FK relationship
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
--- -----------------------------------------------------
--- Table `restaurant`.`restaurant_menu`
--- -----------------------------------------------------
+-- 'restaurant_menu' 테이블 정의
 CREATE TABLE IF NOT EXISTS `catchtable`.`restaurant_menu` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `restaurant_id` INT UNSIGNED NOT NULL,
   `name` VARCHAR(20) NOT NULL,
   `description` TEXT NULL DEFAULT NULL,
   `price` INT UNSIGNED NOT NULL,
-  `created_at` DATETIME NOT NULL DEFAULT
-  CURRENT_TIMESTAMP,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_hidden` TINYINT(1) NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  INDEX `restaurant_id` (`restaurant_id` ASC) VISIBLE,
+  INDEX `restaurant_id_idx` (`restaurant_id` ASC) VISIBLE,
   CONSTRAINT `restaurant_menu_ibfk_1`
     FOREIGN KEY (`restaurant_id`)
     REFERENCES `catchtable`.`restaurant` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
- 
-  CONSTRAINT `fk_restaurant_menu_order_item1`
-    FOREIGN KEY (`id`)
-    REFERENCES `catchtable`.`order_item` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION
+)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -488,19 +485,24 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`payment` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `amount` INT UNSIGNED NOT NULL,
   `order_id` INT UNSIGNED NOT NULL,
+  `method` VARCHAR(30) NOT NULL COMMENT 'CARD, COUPON\n',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
-  `deleted_at` DATETIME NULL,
-  `method` VARCHAR(30) NOT NULL COMMENT 'CARD, COUPON\n',
   PRIMARY KEY (`id`),
   INDEX `payment_ibfk_1` (`order_id` ASC) VISIBLE,
   CONSTRAINT `payment_ibfk_1`
     FOREIGN KEY (`order_id`)
     REFERENCES `catchtable`.`order` (`id`)
     ON DELETE NO ACTION
-   
-  ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `catchtable`.`payment_status` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `type` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -510,16 +512,21 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `catchtable`.`payment_history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `method` VARCHAR(30) NOT NULL,
-  `amount` INT UNSIGNED NOT NULL,
-  `status` INT UNSIGNED NOT NULL,
-  `transaction_date` DATE NOT NULL,
+  `status_id` INT UNSIGNED NULL,
+  `transaction_at` DATETIME NOT NULL,
   `payment_id` INT UNSIGNED NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX `payment_history_ibfk_1` (`payment_id` ASC) VISIBLE,
   CONSTRAINT `payment_history_ibfk_1`
     FOREIGN KEY (`payment_id`)
     REFERENCES `catchtable`.`payment` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_payment_history_payment_status1`
+    FOREIGN KEY (`status_id`)
+    REFERENCES `catchtable`.`payment_status` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -643,7 +650,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `catchtable`.`waiting_history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `waiting_id` INT UNSIGNED NOT NULL,
-  `created_at` INT NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `waiting_status_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_waiting_history_waiting_status1_idx` (`waiting_status_id` ASC) VISIBLE,
@@ -751,6 +758,13 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`custom_holiday_schedule` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+
+
+
+
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
