@@ -4,7 +4,7 @@ CREATE PROCEDURE create_payment_and_history (
     IN p_order_id INT,              -- Order ID
     IN p_payment_amount INT,        -- Payment amount
     IN p_payment_method VARCHAR(30), -- Payment method
-    IN p_transaction_date DATE      -- Transaction date
+    IN p_transaction_at DATETIME        -- Transaction date
 )
 BEGIN
     DECLARE v_payment_id INT;          -- To store the generated payment ID
@@ -18,8 +18,8 @@ BEGIN
     END IF;
 
     -- Step 2: Insert into payment
-    INSERT INTO payment (amount, order_id, method)
-    VALUES (p_payment_amount, p_order_id, p_payment_method);
+    INSERT INTO payment (amount, order_id, method, created_at, updated_at)
+    VALUES (p_payment_amount, p_order_id, p_payment_method, NOW(), NOW());
     SET v_payment_id = LAST_INSERT_ID();
 
     -- Step 3: Get the payment status ID for 'COMPLETE'
@@ -34,8 +34,8 @@ BEGIN
     END IF;
 
     -- Step 4: Insert into payment_history
-    INSERT INTO payment_history (method, amount, status_id, transaction_date, payment_id)
-    VALUES (p_payment_method, p_payment_amount, v_payment_status_id, p_transaction_date, v_payment_id);
+    INSERT INTO payment_history (status_id, transaction_at, payment_id, created_at, updated_at)
+    VALUES (v_payment_status_id, p_transaction_at, v_payment_id, NOW(), NOW());
     SET v_payment_history_id = LAST_INSERT_ID();
 
     -- Return the generated payment ID and payment history ID

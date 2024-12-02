@@ -513,7 +513,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `catchtable`.`payment_history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `status_id` INT UNSIGNED NULL,
-  `transaction_at` DATE NOT NULL,
+  `transaction_at` DATETIME NOT NULL,
   `payment_id` INT UNSIGNED NOT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
