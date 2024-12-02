@@ -17,9 +17,6 @@ BEGIN
         ROLLBACK;
     END;
 
-    -- Start transaction
-    START TRANSACTION;
-
     -- Step 1: Insert into booking
     INSERT INTO booking (type) VALUES ('pickup');
     SET v_booking_id = LAST_INSERT_ID();
@@ -39,9 +36,6 @@ BEGIN
     INSERT INTO pickup_history (pickup_id, status_id, picked_at)
     VALUES (v_pickup_id, 1, NOW());
     SET v_pickup_history_id = LAST_INSERT_ID();
-
-    -- Commit transaction
-    COMMIT;
 
     -- Return the booking ID for further processing
     SELECT v_booking_id AS booking_id, v_pickup_id AS pickup_id;

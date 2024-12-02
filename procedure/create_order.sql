@@ -35,9 +35,6 @@ BEGIN
         SELECT CONCAT('Transaction rolled back due to an error: ', @p_error_message) AS error_message;
     END;
 
-    -- Start transaction
-    START TRANSACTION;
-
     -- Step 1: Validate `p_booking_id`
     IF (SELECT COUNT(*) FROM booking WHERE id = p_booking_id) = 0 THEN
         SIGNAL SQLSTATE '45000' 
@@ -80,9 +77,6 @@ BEGIN
 
     -- Step 4: Update total price in `order`
     UPDATE `order` SET total_price = v_total_price + p_reservation_fee WHERE id = v_order_id;
-
-    -- Commit the transaction
-    COMMIT;
 
     -- Return results
     SELECT v_order_id AS order_id, v_total_price AS total_price;
