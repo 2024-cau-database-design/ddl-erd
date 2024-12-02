@@ -552,7 +552,7 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup_history` (
   `status_id` INT UNSIGNED NOT NULL,
   `picked_at` DATETIME NULL,
   `pickup_id` INT UNSIGNED NOT NULL,
-  `pickup_date` DATE NOT NULL,
+
   PRIMARY KEY (`id`),
   INDEX `pickup_history_ibfk_1` (`status_id` ASC) VISIBLE,
   INDEX `pickup_history_ibfk_2` (`pickup_id` ASC) VISIBLE,
