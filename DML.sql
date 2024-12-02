@@ -1,17 +1,20 @@
 -- user
-INSERT INTO `catchtable`.`user_auth` (password_hash, login_id, email) 
-VALUES ('hashed_password', 'owner_login', 'owner_email@example.com'), 
-('hashed_password2', 'owner_login2', 'owner_email2@example.com',
-('hashed_password3', 'owner_login3', 'owner_email3@example.com'));
+INSERT INTO `catchtable`.`user_auth` (`id`, `password_hash`, `login_id`, `email`, `created_at`, `updated_at`, `is_deleted`) VALUES ('1', '1234', 'user1', 'user1@cau.ac.kr', '24.12.01.18.00', '24.12.01.18.00', '0');
+INSERT INTO `catchtable`.`user_auth` (`id`, `password_hash`, `login_id`, `email`, `created_at`, `updated_at`, `is_deleted`) VALUES ('2', '1234', 'user2', 'user2@cau.ac.kr', '24.12.01.18.00', '24.12.01.18.00', '0');
+INSERT INTO `catchtable`.`user_auth` (`id`, `password_hash`, `login_id`, `email`, `created_at`, `updated_at`, `is_deleted`) VALUES ('3', '1234', 'user3', 'user3@cau.ac.kr', '24.12.01.18.00', '24.12.01.18.00', '0');
+INSERT INTO `catchtable`.`user_auth` (`id`, `password_hash`, `login_id`, `email`, `created_at`, `updated_at`, `is_deleted`) VALUES ('4', '1234', 'user4', 'user4@cau.ac.kr', '24.12.01.18.00', '24.12.01.18.00', '0');
 
 INSERT INTO owner (id) 
 VALUES (LAST_INSERT_ID());
 
+-- owner
+INSERT INTO `catchtable`.`owner` (`id`, `created_at`, `is_deleted`) VALUES ('1', '2024.12.01.20.44', '0');
+
 -- customer
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`)
-VALUES
-(2, 'John Doe', '01012345678'),
-(3, 'Jane Smith', '01098765432');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('1', '김성민', '01026592963');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('2', '이가연', '01034757832');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('3', '조김흔우', '01038583922');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('4', '김의진', '01048583839');
 
 -- restaurant
 INSERT INTO restaurant (name, owner_id) 
@@ -39,4 +42,11 @@ VALUES ('BEFORE_VISIT'),('AFTER_VISIT'),('NO_SHOW');
 
 INSERT INTO `catchtable`.`payment_status` (`type`)
 VALUES ('COMPLETE'),('REFUNDED')
+
+-- waiting_status
+INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('1', '\"대기중\"');
+INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('2', '\"착석완료\"');
+INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('3', '\"취소\"');
+
+
 
