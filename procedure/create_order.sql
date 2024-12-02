@@ -30,8 +30,9 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION 
     BEGIN
+        GET DIAGNOSTICS CONDITION 1 @p_error_message = MESSAGE_TEXT;
         ROLLBACK;
-        SELECT 'Transaction rolled back due to an error.' AS error_message;
+        SELECT CONCAT('Transaction rolled back due to an error: ', @p_error_message) AS error_message;
     END;
 
     -- Start transaction
