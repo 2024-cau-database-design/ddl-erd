@@ -483,13 +483,11 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `catchtable`.`payment` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `amount` INT UNSIGNED NOT NULL,
+  `amount` INT UNSIGNED NOT NULL, 
   `order_id` INT UNSIGNED NOT NULL,
+  `method` VARCHAR(30) NOT NULL COMMENT 'CARD, COUPON\n',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
-  `deleted_at` DATETIME NULL,
-  `method` VARCHAR(30) NOT NULL COMMENT 'CARD, COUPON\n',
   PRIMARY KEY (`id`),
   INDEX `payment_ibfk_1` (`order_id` ASC) VISIBLE,
   CONSTRAINT `payment_ibfk_1`
@@ -514,11 +512,11 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `catchtable`.`payment_history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `method` VARCHAR(30) NOT NULL,
-  `amount` INT UNSIGNED NOT NULL,
   `status_id` INT UNSIGNED NULL,
-  `transaction_date` DATE NOT NULL,
+  `transaction_at` DATE NOT NULL,
   `payment_id` INT UNSIGNED NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX `payment_history_ibfk_1` (`payment_id` ASC) VISIBLE,
   CONSTRAINT `payment_history_ibfk_1`
