@@ -1,9 +1,17 @@
 -- user
-INSERT INTO user_auth (password_hash, login_id, email) 
-VALUES ('hashed_password', 'owner_login', 'owner_email@example.com');
+INSERT INTO `catchtable`.`user_auth` (password_hash, login_id, email) 
+VALUES ('hashed_password', 'owner_login', 'owner_email@example.com'), 
+('hashed_password2', 'owner_login2', 'owner_email2@example.com',
+('hashed_password3', 'owner_login3', 'owner_email3@example.com'));
 
 INSERT INTO owner (id) 
 VALUES (LAST_INSERT_ID());
+
+-- customer
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`)
+VALUES
+(2, 'John Doe', '01012345678'),
+(3, 'Jane Smith', '01098765432');
 
 -- restaurant
 INSERT INTO restaurant (name, owner_id) 
