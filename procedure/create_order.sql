@@ -1,3 +1,5 @@
+DROP PROCEDURE create_order_and_items;
+
 DELIMITER $$
 
 CREATE PROCEDURE create_order_and_items (
@@ -43,7 +45,7 @@ BEGIN
 
     -- Step 2: Insert into `order`
     INSERT INTO `order` (status_id, created_at, total_price, restaurant_id, customer_id, reservation_fee, booking_id)
-    VALUES ((SELECT id FROM order_status WHERE type = 'COMPLETED'), UNIX_TIMESTAMP(), 0, p_restaurant_id, p_customer_id, p_reservation_fee, p_booking_id);
+    VALUES ((SELECT id FROM order_status WHERE type = 'COMPLETE'), NOW(), 0, p_restaurant_id, p_customer_id, p_reservation_fee, p_booking_id);
     SET v_order_id = LAST_INSERT_ID();
 
     -- Step 3: Process menu JSON
@@ -83,3 +85,35 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+
+
+
+SELECT * from restaurant_menu;
+SELECT * from user_auth;
+SELECT * from customer;
+
+
+
+SET @menu_json = '[
+    {"menu_id": 1, "quantity": 2 },
+    {"menu_id": 2, "quantity": 3 }
+]';
+
+
+
+
+CALL create_order_and_items(
+    9,         -- p_booking_id (must exist in booking table)
+    1,           -- p_restaurant_id
+    2,         -- p_customer_id
+    500,         -- p_reservation_fee
+    @menu_json   -- p_menu_json
+);
+
+SELECT * from booking;
+SELECT * from pickup;
+SELECT * FROM `order`;
+DELETE FROM `order` WHERE id = 2;
+SELECT * FROM `order_item`;
