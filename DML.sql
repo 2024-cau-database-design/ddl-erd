@@ -11,10 +11,10 @@ VALUES (LAST_INSERT_ID());
 INSERT INTO `catchtable`.`owner` (`id`, `created_at`, `is_deleted`) VALUES ('1', '2024.12.01.20.44', '0');
 
 -- customer
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('1', '김성민', '01026592963');
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('2', '이가연', '01034757832');
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('3', '조김흔우', '01038583922');
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('4', '김의진', '01048583839');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('2', '김성민', '01026592963');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('3', '이가연', '01034757832');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('4', '조김흔우', '01038583922');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('5', '김의진', '01048583839');
 
 -- restaurant
 INSERT INTO restaurant (name, owner_id) 

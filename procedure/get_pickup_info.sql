@@ -12,10 +12,11 @@ BEGIN
         SELECT
             p.id AS id,
             p.restaurant_id,
-            p.pickup_at,
             p.created_at,
             ps.type AS pickup_status,
             ph.created_at AS updated_at
+            ph.pickup_at AS pickup_at
+            ph.picked_at AS picked_at
         FROM pickup p
         LEFT JOIN pickup_history ph ON p.id = ph.pickup_id
         LEFT JOIN pickup_status ps ON ph.status_id = ps.id

@@ -271,7 +271,6 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup` (
   `restaurant_id` INT UNSIGNED NOT NULL,
   `customer_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `pickup_ibfk_2` (`pickup_time_id` ASC) VISIBLE,
   INDEX `fk_pickup_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
   INDEX `fk_pickup_customer1_idx` (`customer_id` ASC) VISIBLE,
   CONSTRAINT `fk_pickup_booking`
@@ -553,7 +552,6 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup_history` (
   `pickup_time_id` INT UNSIGNED NOT NULL,
   `pickup_at` DATETIME NOT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
   PRIMARY KEY (`id`),
   INDEX `pickup_history_ibfk_1` (`status_id` ASC) VISIBLE,
   INDEX `pickup_history_ibfk_2` (`pickup_id` ASC) VISIBLE,
@@ -564,14 +562,13 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup_history` (
     ON UPDATE NO ACTION,
   CONSTRAINT `pickup_history_ibfk_2`
     FOREIGN KEY (`pickup_id`)
-    REFERENCES `catchtable`.`pickup` (`id`))
-  CONSTRAINT `pickup_history_ibfk_2`
+    REFERENCES `catchtable`.`pickup` (`id`),
+  CONSTRAINT `pickup_history_ibfk_3`
     FOREIGN KEY (`pickup_time_id`)
     REFERENCES `catchtable`.`pickup_time` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-ENGINE = 
-InnoDB
+    ON UPDATE NO ACTION
+) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 

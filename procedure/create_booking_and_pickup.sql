@@ -1,7 +1,9 @@
+DROP PROCEDURE create_booking_and_pickup;
+
 DELIMITER $$
 
 CREATE PROCEDURE create_booking_and_pickup (
-    IN p_pickup_at DATE,
+    IN p_pickup_at DATETIME,
     IN p_restaurant_id INT,
     IN p_customer_id INT,
     IN p_pickup_time_id INT
@@ -38,12 +40,13 @@ END$$
 DELIMITER ;
 
 CALL create_booking_and_pickup(
-    '2024-12-05', -- p_pickup_at
+    '2024-12-05T04:30:00', -- p_pickup_at
     1,            -- p_restaurant_id
     1,          -- p_customer_id
     1             -- p_pickup_time_id
 );
 
 SELECT * FROM booking;
+SELECT * from customer;
 SELECT * FROM pickup;
 SELECT * FROM pickup_history;
