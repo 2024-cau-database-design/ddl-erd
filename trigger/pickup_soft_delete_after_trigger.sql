@@ -1,12 +1,16 @@
 DROP TRIGGER pickup_soft_delete_after_trigger;
 
+DELIMITER //
+
 -- after trigger
 CREATE TRIGGER pickup_soft_delete_after_trigger
 AFTER UPDATE ON pickup
 FOR EACH ROW
 BEGIN
     IF NEW.is_deleted = TRUE AND OLD.is_deleted = FALSE THEN
-        -- 1. Insert new row in pickup_history with 'CANCEL' status
+        -- 1. Update deleted_at in pickup table
+
+        -- 2. Insert new row in pickup_history with 'CANCEL' status
         INSERT INTO pickup_history (
             status_id, 
             pickup_id, 
@@ -25,7 +29,7 @@ BEGIN
                  WHERE pickup_id = NEW.id 
                  ORDER BY created_at DESC 
                  LIMIT 1),
-                1
+                1  -- 기본값, 실제 상황에 맞게 조정 필요
             ),
             COALESCE(
                 (SELECT pickup_at 
@@ -33,20 +37,20 @@ BEGIN
                  WHERE pickup_id = NEW.id 
                  ORDER BY created_at DESC 
                  LIMIT 1),
-                CURRENT_TIMESTAMP
+                CURRENT_TIMESTAMP  -- 기본값, 실제 상황에 맞게 조정 필요
             ),
             CURRENT_TIMESTAMP
         FROM pickup_status ps
         WHERE ps.type = 'CANCEL'
         LIMIT 1;
 
-        -- 2. Update order status to 'CANCEL'
+        -- 3. Update order status to 'CANCEL'
         UPDATE `order` o
         JOIN order_status os ON os.type = 'CANCEL'
         SET o.status_id = os.id
         WHERE o.booking_id = NEW.id;
 
-        -- 3. Insert new row in payment_history with 'REFUND' status
+        -- 4. Insert new row in payment_history with 'REFUND' status
         INSERT INTO payment_history (
             status_id, 
             transaction_at, 
@@ -79,7 +83,9 @@ SELECT * from pickup;
 
 SELECT * from pickup_history;
 SELECT * from `order`;
+SELECT * from payment;
 SELECT * from payment_history;
-SELECT * from payment_status;
 
-UPDATE pickup SET pickup.is_deleted = 1 where pickup.id = 17;
+UPDATE pickup SET pickup.is_deleted = 0, pickup.deleted_at = NULL where pickup.id = 16;
+UPDATE pickup SET pickup.is_deleted = 0, pickup.deleted_at = NULL where pickup.id = 17;
+
