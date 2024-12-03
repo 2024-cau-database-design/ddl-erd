@@ -264,17 +264,16 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `catchtable`.`pickup` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `picked_at` DATETIME NULL,
-  `pickup_time_id` INT UNSIGNED NOT NULL,
-  `pickup_at` DATETIME NOT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   `deleted_at` DATETIME NULL,
   `restaurant_id` INT UNSIGNED NOT NULL,
+  `customer_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `pickup_ibfk_2` (`pickup_time_id` ASC) VISIBLE,
   INDEX `fk_pickup_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
+  INDEX `fk_pickup_customer1_idx` (`customer_id` ASC) VISIBLE,
   CONSTRAINT `fk_pickup_booking`
     FOREIGN KEY (`id`)
     REFERENCES `catchtable`.`booking` (`id`)
@@ -283,12 +282,16 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup` (
   CONSTRAINT `pickup_ibfk_2`
     FOREIGN KEY (`pickup_time_id`)
     REFERENCES `catchtable`.`pickup_time` (`id`)
-    ON DELETE 
-NO ACTION
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_pickup_restaurant1`
     FOREIGN KEY (`restaurant_id`)
     REFERENCES `catchtable`.`restaurant` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_pickup_customer1`
+    FOREIGN KEY (`customer_id`)
+    REFERENCES `catchtable`.`customer` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -550,8 +553,10 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `catchtable`.`pickup_history` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `status_id` INT UNSIGNED NOT NULL,
-  `picked_at` DATETIME NULL,
   `pickup_id` INT UNSIGNED NOT NULL,
+  `picked_at` DATETIME NULL,
+  `pickup_time_id` INT UNSIGNED NOT NULL,
+  `pickup_at` DATETIME NOT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   PRIMARY KEY (`id`),
