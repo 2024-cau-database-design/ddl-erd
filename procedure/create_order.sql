@@ -43,7 +43,7 @@ BEGIN
 
     -- Step 2: Insert into `order`
     INSERT INTO `order` (status_id, created_at, total_price, restaurant_id, customer_id, reservation_fee, booking_id)
-    VALUES (1, UNIX_TIMESTAMP(), 0, p_restaurant_id, p_customer_id, p_reservation_fee, p_booking_id);
+    VALUES ((SELECT id FROM order_status WHERE type = 'COMPLETED'), UNIX_TIMESTAMP(), 0, p_restaurant_id, p_customer_id, p_reservation_fee, p_booking_id);
     SET v_order_id = LAST_INSERT_ID();
 
     -- Step 3: Process menu JSON
