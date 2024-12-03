@@ -5,19 +5,20 @@ AFTER UPDATE ON work_schedule
 FOR EACH ROW
 BEGIN
     -- 변경된 운영 시간과 충돌하는 예약, 픽업, 대기 정보를 조회하는 쿼리
-    SELECT reservation.id, pickup.id, wating.id
-    FROM reservation
-    INNER JOIN reservation_time ON reservation.reservation_time_id = reservation_time.id
-    INNER JOIN restaurant_table ON reservation.restaurant_table_id = restaurant_table.id
-    INNER JOIN work_schedule ON restaurant_table.restaurant_id = work_schedule.restaurant_id
-    LEFT JOIN pickup ON reservation.id = pickup.id
-    LEFT JOIN wating ON reservation.id = wating.id
-    WHERE reservation.restaurant_id = NEW.restaurant_id
-    AND reservation.booking_date = DATE_FORMAT(NOW(), '%Y-%m-%d')
-    AND reservation_time.time NOT BETWEEN NEW.start_time AND NEW.end_time;
+    SELECT r.id AS reservation_id, p.id AS pickup_id, w.id AS waiting_id
+    FROM reservation r
+    JOIN reservation_time rt ON r.reservation_time_id = rt.id
+    JOIN restaurant_table tbl ON r.restaurant_table_id = tbl.id
+    JOIN work_schedule ws ON tbl.restaurant_id = ws.restaurant_id
+    LEFT JOIN pickup p ON r.id = p.id
+    LEFT JOIN waiting w ON r.restaurant_id = w.restaurant_id  
+    WHERE r.restaurant_id = NEW.restaurant_id
+      AND r.booking_date = CURDATE()
+      AND rt.time NOT BETWEEN NEW.start_time AND NEW.end_time
+      AND ws.day_of_week = DAYOFWEEK(CURDATE());
 
-    -- 충돌하는 예약, 픽업, 대기 정보를 업데이트 또는 삭제하는 로직 (필요에 따라 구현)
-    -- ...
+    -- delete_related_bookings 프로시저 호출
+    CALL delete_related_bookings(NEW.restaurant_id, CURDATE());
 END //
 DELIMITER ;
 
@@ -28,19 +29,19 @@ AFTER UPDATE ON custom_work_schedule
 FOR EACH ROW
 BEGIN
     -- 변경된 운영 시간과 충돌하는 예약, 픽업, 대기 정보를 조회하는 쿼리
-    SELECT reservation.id, pickup.id, wating.id
-    FROM reservation
-    INNER JOIN reservation_time ON reservation.reservation_time_id = reservation_time.id
-    INNER JOIN restaurant_table ON reservation.restaurant_table_id = restaurant_table.id
-    INNER JOIN custom_work_schedule ON restaurant_table.restaurant_id = custom_work_schedule.restaurant_id
-    LEFT JOIN pickup ON reservation.id = pickup.id
-    LEFT JOIN wating ON reservation.id = wating.id
-    WHERE reservation.restaurant_id = NEW.restaurant_id
-    AND reservation.booking_date = NEW.date
-    AND reservation_time.time NOT BETWEEN NEW.start_time AND NEW.end_time;
+    SELECT r.id AS reservation_id, p.id AS pickup_id, w.id AS waiting_id
+    FROM reservation r
+    JOIN reservation_time rt ON r.reservation_time_id = rt.id
+    JOIN restaurant_table tbl ON r.restaurant_table_id = tbl.id
+    JOIN custom_work_schedule cws ON tbl.restaurant_id = cws.restaurant_id
+    LEFT JOIN pickup p ON r.id = p.id
+    LEFT JOIN waiting w ON r.restaurant_id = w.restaurant_id
+    WHERE r.restaurant_id = NEW.restaurant_id
+      AND r.booking_date = NEW.date
+      AND rt.time NOT BETWEEN NEW.start_time AND NEW.end_time;
 
-    -- 충돌하는 예약, 픽업, 대기 정보를 업데이트 또는 삭제하는 로직 (필요에 따라 구현)
-    -- ...
+    -- delete_related_bookings 프로시저 호출
+    CALL delete_related_bookings(NEW.restaurant_id, NEW.date);
 END //
 DELIMITER ;
 
@@ -51,15 +52,15 @@ AFTER UPDATE ON custom_holiday_schedule
 FOR EACH ROW
 BEGIN
     -- 변경된 휴일과 충돌하는 예약, 픽업, 대기 정보를 조회하는 쿼리
-    SELECT reservation.id, pickup.id, wating.id
-    FROM reservation
-    INNER JOIN custom_holiday_schedule ON reservation.restaurant_id = custom_holiday_schedule.restaurant_id
-    LEFT JOIN pickup ON reservation.id = pickup.id
-    LEFT JOIN wating ON reservation.id = wating.id
-    WHERE reservation.restaurant_id = NEW.restaurant_id
-    AND reservation.booking_date = NEW.date;
+    SELECT r.id AS reservation_id, p.id AS pickup_id, w.id AS waiting_id
+    FROM reservation r
+    JOIN custom_holiday_schedule chs ON r.restaurant_id = chs.restaurant_id
+    LEFT JOIN pickup p ON r.id = p.id
+    LEFT JOIN waiting w ON r.restaurant_id = w.restaurant_id
+    WHERE r.restaurant_id = NEW.restaurant_id
+      AND r.booking_date = NEW.date;
 
-    -- 충돌하는 예약, 픽업, 대기 정보를 업데이트 또는 삭제하는 로직 (필요에 따라 구현)
-    -- ...
+    -- delete_related_bookings 프로시저 호출
+    CALL delete_related_bookings(NEW.restaurant_id, NEW.date);
 END //
 DELIMITER ;
