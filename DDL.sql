@@ -312,7 +312,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `catchtable`.`order` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `status_id` INT UNSIGNED NOT NULL,
-  `created_at` INT UNSIGNED NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `total_price` INT UNSIGNED NOT NULL,
   `restaurant_id` INT UNSIGNED NOT NULL,
   `customer_id` INT UNSIGNED NOT NULL,
@@ -552,6 +552,7 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup_history` (
   `status_id` INT UNSIGNED NOT NULL,
   `picked_at` DATETIME NULL,
   `pickup_id` INT UNSIGNED NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   PRIMARY KEY (`id`),
   INDEX `pickup_history_ibfk_1` (`status_id` ASC) VISIBLE,
