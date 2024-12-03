@@ -22,23 +22,17 @@ BEGIN
     SET v_booking_id = LAST_INSERT_ID();
 
     -- Step 2: Insert into pickup
-    -- Ensure p_pickup_time_id exists in pickup_time and p_restaurant_id is valid
-    IF (SELECT COUNT(*) FROM pickup_time WHERE id = p_pickup_time_id AND restaurant_id = p_restaurant_id) = 0 THEN
-        SIGNAL SQLSTATE '45000' 
-            SET MESSAGE_TEXT = 'Invalid pickup_time_id or restaurant_id';
-    END IF;
-
-    INSERT INTO pickup (id, pickup_at, restaurant_id, pickup_time_id)
-    VALUES (v_booking_id, p_pickup_at, p_restaurant_id, p_pickup_time_id);
+    INSERT INTO pickup (id, created_at, updated_at, is_deleted, restaurant_id, customer_id)
+    VALUES (v_booking_id, NOW(), NOW(), 0, p_restaurant_id, p_customer_id);
     SET v_pickup_id = LAST_INSERT_ID();
 
     -- Step 3: Insert into pickup_history
-    INSERT INTO pickup_history (pickup_id, status_id, picked_at)
-    VALUES (v_pickup_id, 1, NOW());
+    INSERT INTO pickup_history (pickup_id, status_id, picked_at, pickup_time_id, pickup_at)
+    VALUES (v_pickup_id, 1, NULL, p_pickup_time_id, p_pickup_at);
     SET v_pickup_history_id = LAST_INSERT_ID();
 
     -- Return the booking ID for further processing
-    SELECT v_booking_id AS booking_id, v_pickup_id AS pickup_id;
+    SELECT * FROM pickup WHERE id = v_pickup_id;
 END$$
 
 DELIMITER ;

@@ -279,11 +279,6 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup` (
     REFERENCES `catchtable`.`booking` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `pickup_ibfk_2`
-    FOREIGN KEY (`pickup_time_id`)
-    REFERENCES `catchtable`.`pickup_time` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_pickup_restaurant1`
     FOREIGN KEY (`restaurant_id`)
     REFERENCES `catchtable`.`restaurant` (`id`)
@@ -570,6 +565,11 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`pickup_history` (
   CONSTRAINT `pickup_history_ibfk_2`
     FOREIGN KEY (`pickup_id`)
     REFERENCES `catchtable`.`pickup` (`id`))
+  CONSTRAINT `pickup_history_ibfk_2`
+    FOREIGN KEY (`pickup_time_id`)
+    REFERENCES `catchtable`.`pickup_time` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
 ENGINE = 
 InnoDB
 DEFAULT CHARACTER SET = utf8mb4
