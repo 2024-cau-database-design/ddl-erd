@@ -41,7 +41,7 @@ INSERT INTO `catchtable`.`reservation_status` (`type`)
 VALUES ('BEFORE_VISIT'),('AFTER_VISIT'),('NO_SHOW');
 
 INSERT INTO `catchtable`.`payment_status` (`type`)
-VALUES ('COMPLETE'),('REFUNDED')
+VALUES ('COMPLETE'),('REFUNDED');
 
 -- waiting_status
 INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('1', '\"대기중\"');
