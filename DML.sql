@@ -33,12 +33,16 @@ VALUES ('12:00:00', LAST_INSERT_ID());
 -- order
 INSERT INTO `catchtable`.`order_status` (`type`)
 VALUES ('PENDING'), ('COMPLETE');
+INSERT INTO `catchtable`.`order_status` (`type`)
+VALUES ('CANCEL');
 
 INSERT INTO `catchtable`.`pickup_status` (`type`)
 VALUES ('BEFORE_PICKUP'), ('AFTER_PICKUP');
+INSERT INTO `catchtable`.`pickup_status` (`type`)
+VALUES ('CANCEL');
 
 INSERT INTO `catchtable`.`reservation_status` (`type`)
-VALUES ('BEFORE_VISIT'),('AFTER_VISIT'),('NO_SHOW');
+VALUES ('BEFORE_VISIT'),('AFTER_VISIT'),('NO_SHOW'), ('CANCEL');
 
 INSERT INTO `catchtable`.`payment_status` (`type`)
 VALUES ('COMPLETE'),('REFUNDED');
