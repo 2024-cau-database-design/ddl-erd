@@ -764,6 +764,136 @@ ENGINE = InnoDB;
 
 
 
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Function
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+
+
+-- -----------------------------------------------------
+-- Function UpdatewaitingStatus
+-- -----------------------------------------------------
+DELIMITER $$
+
+CREATE FUNCTION UpdateWaitingStatus(
+    waitingId INT,       -- 변경할 waiting의 ID
+    newStatusId INT      -- 새로 설정할 상태 ID (2 또는 3)
+)
+RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+    DECLARE resultMessage VARCHAR(50);
+
+    -- 유효성 검사: 새로운 상태 ID가 유효한지 확인
+    IF newStatusId NOT IN (2, 3) THEN
+        RETURN 'Invalid status transition'; -- 잘못된 상태 변경 시 메시지 반환
+    END IF;
+
+    -- waiting_history 테이블의 가장 최근 기록의 상태와 시간 업데이트
+    UPDATE waiting_history
+    SET 
+        waiting_status_id = newStatusId,  -- 상태 변경
+        created_at = NOW()               -- 변경된 시간 기록
+    WHERE waiting_id = waitingId
+    ORDER BY created_at DESC             -- 가장 최근 기록 선택
+    LIMIT 1;
+
+    -- 결과 메시지 반환
+    SET resultMessage = CONCAT('Status updated to ', newStatusId);
+    RETURN resultMessage;
+END$$
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `GenerateDynamicRankTable`;
+
+
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Procedure
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Procedure GenerateDynamicRankTable
+-- -----------------------------------------------------
+
+DELIMITER $$
+
+CREATE PROCEDURE `GenerateDynamicRankTable`(
+    IN `restaurantId` INT
+)
+BEGIN
+    -- 기존 테이블 삭제 (이미 존재할 경우)
+    DROP TEMPORARY TABLE IF EXISTS dynamic_rank_table;
+
+    -- 새로운 테이블 생성
+    CREATE TEMPORARY TABLE dynamic_rank_table AS
+    SELECT 
+        c.name,
+        c.phone_number,
+        RANK() OVER (ORDER BY wh.created_at ASC) AS `rank`
+    FROM waiting w
+    INNER JOIN waiting_history wh ON w.id = wh.waiting_id
+    INNER JOIN customer c ON w.customer_id = c.id
+    WHERE w.restaurant_id = restaurantId
+      AND wh.waiting_status_id = 1; -- "대기중" 상태만 포함
+END$$
+
+DELIMITER ;
+
+
+
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- TRIGGER
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Trigger validate_waiting_insert
+-- -----------------------------------------------------
+DELIMITER $$
+
+CREATE TRIGGER `validate_waiting_insert`
+BEFORE INSERT ON `waiting`
+FOR EACH ROW
+BEGIN
+    DECLARE duplicate_count INT;
+
+    -- 같은 customer_id, restaurant_id, created_at(날짜) 기준으로 중복 검사
+    SELECT COUNT(*)
+    INTO duplicate_count
+    FROM `waiting`
+    WHERE `customer_id` = NEW.`customer_id`
+      AND `restaurant_id` = NEW.`restaurant_id`
+      AND DATE(FROM_UNIXTIME(`created_at`)) = DATE(FROM_UNIXTIME(NEW.`created_at`));
+
+    -- 중복이 존재하면 에러 반환
+    IF duplicate_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A customer cannot create multiple waiting entries for the same restaurant on the same day.';
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
 
 
 
