@@ -35,7 +35,6 @@ BEGIN
             pd.*,
             o.id AS order_id,
             os.type AS order_status,
-            o.created_at AS order_created_at,
             o.total_price,
             o.reservation_fee
         FROM pickup_detail pd
