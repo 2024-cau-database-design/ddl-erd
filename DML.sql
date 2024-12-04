@@ -11,10 +11,10 @@ VALUES (LAST_INSERT_ID());
 INSERT INTO `catchtable`.`owner` (`id`, `created_at`, `is_deleted`) VALUES ('1', '2024.12.01.20.44', '0');
 
 -- customer
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('2', '김성민', '01026592963');
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('3', '이가연', '01034757832');
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('4', '조김흔우', '01038583922');
-INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('5', '김의진', '01048583839');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('2', 'Kim', '01026592963');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('3', 'Lee', '01034757832');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('4', 'Jo', '01038583922');
+INSERT INTO `catchtable`.`customer` (`id`, `name`, `phone_number`) VALUES ('5', 'Kimm', '01048583839');
 
 -- restaurant
 INSERT INTO restaurant (name, owner_id) 
@@ -48,9 +48,9 @@ INSERT INTO `catchtable`.`payment_status` (`type`)
 VALUES ('COMPLETE'),('REFUNDED');
 
 -- waiting_status
-INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('1', '\"대기중\"');
-INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('2', '\"착석완료\"');
-INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('3', '\"취소\"');
+INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('1', '\"waiting\"');
+INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('2', '\"completed\"');
+INSERT INTO `catchtable`.`waiting_status` (`id`, `type`) VALUES ('3', '\"cancelled\"');
 
 
 
