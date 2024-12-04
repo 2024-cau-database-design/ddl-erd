@@ -205,9 +205,6 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `catchtable`.`reservation` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `reservation_time_id` INT UNSIGNED NOT NULL,
-  `booking_date` DATE NOT NULL,
-  `guests_count` TINYINT(6) NOT NULL,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   `deleted_at` DATETIME NULL,
@@ -215,7 +212,6 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`reservation` (
   `is_hidden` TINYINT(1) NULL DEFAULT 1,
   `restaurant_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `reservation_ibfk_2` (`reservation_time_id` ASC) VISIBLE,
   INDEX `fk_reservation_restaurant_table1_idx` (`restaurant_table_id` ASC) VISIBLE,
   INDEX `fk_reservation_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
   CONSTRAINT `fk_reservation_booking`
@@ -223,11 +219,6 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`reservation` (
     REFERENCES `catchtable`.`booking` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `reservation_ibfk_2`
-    FOREIGN KEY (`reservation_time_id`)
-    REFERENCES `catchtable`.`reservation_time` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_reservation_restaurant_table1`
     FOREIGN KEY (`restaurant_table_id`)
     REFERENCES `catchtable`.`restaurant_table` (`id`)
@@ -591,14 +582,21 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`reservation_history` (
   `status_id` INT UNSIGNED NOT NULL,
   `visited_at` DATETIME NULL DEFAULT NULL,
   `reservation_id` INT UNSIGNED NOT NULL,
-  `booking_time` DATE NOT NULL,
   `guests_count` TINYINT(6) UNSIGNED NOT NULL,
+  `reservation_at` DATETIME NOT NULL,
+  `reservation_time_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`, `status_id`),
   INDEX `reservation_history_ibfk_1` (`status_id` ASC) VISIBLE,
   INDEX `reservation_history_ibfk_2` (`reservation_id` ASC) VISIBLE,
+  INDEX `reservation__historyibfk_3` (`reservation_time_id` ASC) VISIBLE,
   CONSTRAINT `reservation_history_ibfk_1`
     FOREIGN KEY (`status_id`)
     REFERENCES `catchtable`.`reservation_status` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `reservation__historyibfk_3`
+    FOREIGN KEY (`reservation_time_id`)
+    REFERENCES `catchtable`.`reservation_time` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `reservation_history_ibfk_2`
