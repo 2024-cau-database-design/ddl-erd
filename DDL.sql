@@ -211,6 +211,7 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`reservation` (
   `restaurant_table_id` INT UNSIGNED NOT NULL, -- Changed to INT UNSIGNED
   `is_hidden` TINYINT(1) NULL DEFAULT 1,
   `restaurant_id` INT UNSIGNED NOT NULL,
+  `customer_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_reservation_restaurant_table1_idx` (`restaurant_table_id` ASC) VISIBLE,
   INDEX `fk_reservation_restaurant1_idx` (`restaurant_id` ASC) VISIBLE,
@@ -227,6 +228,11 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`reservation` (
   CONSTRAINT `fk_reservation_restaurant1`
     FOREIGN KEY (`restaurant_id`)
     REFERENCES `catchtable`.`restaurant` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+  CONSTRAINT `fk_reservation_customer1`
+    FOREIGN KEY (`customer_id`)
+    REFERENCES `catchtable`.`customer` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
