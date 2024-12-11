@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`restaurant` (
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_deleted` TINYINT(1) NOT NULL DEFAULT '0',
   `deleted_at` DATETIME NULL DEFAULT NULL,
+  `is_hidden` TINYINT(1) NULL DEFAULT 1,
   `owner_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_restaurant_owner1_idx` (`owner_id` ASC) VISIBLE,
@@ -209,7 +210,6 @@ CREATE TABLE IF NOT EXISTS `catchtable`.`reservation` (
   `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   `deleted_at` DATETIME NULL,
   `restaurant_table_id` INT UNSIGNED NOT NULL, -- Changed to INT UNSIGNED
-  `is_hidden` TINYINT(1) NULL DEFAULT 1,
   `restaurant_id` INT UNSIGNED NOT NULL,
   `customer_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
